@@ -9,6 +9,7 @@ public abstract class BibleSource
         new GodpeopleBible { Id = 0 },
         new GodpiaBible { Id = 1 },
         new GoodtvBible { Id = 2 },
+        new LocalBible { Id = 3 },
     };
 
     public int Id { get; set; }

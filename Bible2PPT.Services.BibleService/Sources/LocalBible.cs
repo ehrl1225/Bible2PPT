@@ -1,8 +1,9 @@
-
+﻿
 
 using System.Text;
 using Bible2PPT.Bibles;
 using Bible2PPT.Services.BibleIndexService;
+using Bible2PPT.Services.BibleService.Sources;
 
 namespace Bible2PPT.Sources;
 
@@ -10,6 +11,7 @@ public class LocalBible : BibleSource
 {
     private const string BASE_URL = "resource/bible";
     private static readonly Encoding encoding = Encoding.GetEncoding("EUC-KR");
+    private FileManager fileManager = new();
 
     public LocalBible()
     {
