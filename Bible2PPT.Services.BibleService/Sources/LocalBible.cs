@@ -1,5 +1,5 @@
 ﻿
-
+using System.IO;
 using System.Text;
 using Bible2PPT.Bibles;
 using Bible2PPT.Services.BibleIndexService;
@@ -11,7 +11,6 @@ public class LocalBible : BibleSource
 {
     private const string BASE_URL = "resource/bible";
     private static readonly Encoding encoding = Encoding.GetEncoding("EUC-KR");
-    private FileManager fileManager = new();
 
     public LocalBible()
     {
@@ -28,14 +27,75 @@ public class LocalBible : BibleSource
                 LanguageCode = "ko",
             }
         });
-    public override Task<List<Book>> GetBooksOnlineAsync(Bible bible)
+    public override async Task<List<Book>> GetBooksOnlineAsync(Bible bible)
     {
-        throw new NotImplementedException();
+        string[] bookNames = FileManager.LoadFileNames();
+        return await Task.Run(() => string2book(bookNames));
     }
-    public override Task<List<Chapter>> GetChaptersOnlineAsync(Book book) => throw new NotImplementedException();
-    public override Task<List<Verse>> GetVersesOnlineAsync(Chapter chapter)
+    public override async Task<List<Chapter>> GetChaptersOnlineAsync(Book book)
     {
-        throw new NotImplementedException();
+        return await Task.Run(() =>
+        {
+            var chapters = new List<Chapter>();
+            var bookName = FileManager.remove_extension(book.OnlineId);
+            var indexes = FileManager.getIndexs(bookName);
+            for (var i = 1; i <= indexes.Count; i++)
+            {
+                chapters.Add(
+                    new Chapter
+                    {
+                        OnlineId = $"{i}",
+                        Number = i
+                    }
+                );
+            }
+            return chapters;
+        });
+    }
+    public override async Task<List<Verse>> GetVersesOnlineAsync(Chapter chapter)
+    {
+        return await Task.Run(() =>
+        {
+            var book = chapter.Book;
+            var bookName = FileManager.remove_extension(book.OnlineId);
+            var indexes = FileManager.getIndexs(bookName);
+            var verses = new List<Verse>();
+
+            var startLine = indexes[chapter.Number - 1];
+            var endLine = (chapter.Number < indexes.Count) ? indexes[chapter.Number] - 1 : -1;
+            
+            var bookPath = Path.Combine("bible", "text", book.OnlineId);
+            var texts = FileManager.ReadFromToLine(bookPath, startLine, endLine);
+
+            for (var i = 0; i < texts.Count; i++)
+            {
+                verses.Add(
+                    new Verse
+                    {
+                        Number = i + 1,
+                        Text = texts[i]
+                    }
+                );
+            }
+            return verses;
+        });
+    }
+
+    private List<Book> string2book(string[] bookNames)
+    {
+        var books = new List<Book>();
+        foreach (var bookName in bookNames)
+        {
+            var book = new Book
+            {
+                OnlineId = bookName,
+                Name = FileManager.remove_number(FileManager.remove_extension(bookName)),
+                ChapterCount = FileManager.getIndexs(FileManager.remove_extension(bookName)).Count,
+            };
+            book.Key = GetBookKey(book);
+            books.Add(book);
+        }
+        return books;
     }
 
     private static BookKey GetBookKey(Book book) => book.OnlineId switch

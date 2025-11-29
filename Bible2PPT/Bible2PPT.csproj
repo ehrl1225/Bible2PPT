@@ -33,7 +33,12 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\**\*" />
+    <Content Include="Resources\bible\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
+
+
 
   <ItemGroup>
     <PackageReference Include="FontAwesome.Sharp" Version="5.15.4" />
