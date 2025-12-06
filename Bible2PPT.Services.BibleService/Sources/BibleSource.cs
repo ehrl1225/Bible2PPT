@@ -6,10 +6,10 @@ public abstract class BibleSource
 {
     public static BibleSource[] AvailableSources = new BibleSource[]
     {
-        //new GodpeopleBible { Id = 0 },
-        //new GodpiaBible { Id = 1 },
-        //new GoodtvBible { Id = 2 },
-        new LocalBible { Id = 0 },
+        new GodpeopleBible { Id = 0 },
+        new GodpiaBible { Id = 1 },
+        new GoodtvBible { Id = 2 },
+        new LocalBible { Id = 3 },
     };
 
     public int Id { get; set; }

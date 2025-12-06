@@ -14,7 +14,6 @@ namespace Bible2PPT.Services.BibleService.Sources
         {
             string path = "bible/text";
             var result = Directory.GetFiles(path).Select(Path.GetFileName).ToArray();
-            Console.WriteLine(result);
             return result;
         }
 
@@ -24,7 +23,7 @@ namespace Bible2PPT.Services.BibleService.Sources
             {
                 return bookName;
             }
-            return bookName.Substring(3);
+            return bookName.Substring(4);
         }
 
         public static string remove_extension(string bookName)

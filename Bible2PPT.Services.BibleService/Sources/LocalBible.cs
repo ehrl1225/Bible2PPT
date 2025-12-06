@@ -98,7 +98,7 @@ public class LocalBible : BibleSource
         return books;
     }
 
-    private static BookKey GetBookKey(Book book) => book.OnlineId switch
+    private static BookKey GetBookKey(Book book) => book.Name switch
     {
         "창세기" => BookKey.Genesis,
         "출애굽기" => BookKey.Exodus,
